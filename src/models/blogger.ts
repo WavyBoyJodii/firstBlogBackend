@@ -1,11 +1,10 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 
 interface Blogger {
   username: string;
   password: string;
   email: string;
   admin: boolean;
-  _id: number;
 }
 
 const BloggerSchema = new Schema<Blogger>({
