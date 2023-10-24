@@ -149,6 +149,11 @@ router.put('/post/:id', [
     });
 }));
 // DELETE request for deleting a post
-router.delete('/post/:id');
+router.delete('/post/:id', (0, express_async_handler_1.default)(async (req, res, next) => {
+    await post_1.default.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+        message: 'Post Deleted Succesfully',
+    });
+}));
 exports.default = router;
 //# sourceMappingURL=users.js.map

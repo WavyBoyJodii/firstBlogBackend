@@ -139,6 +139,14 @@ router.put(
 );
 
 // DELETE request for deleting a post
-router.delete('/post/:id');
+router.delete(
+  '/post/:id',
+  expressAsyncHandler(async (req, res, next) => {
+    await Post.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      message: 'Post Deleted Succesfully',
+    });
+  })
+);
 
 export default router;
