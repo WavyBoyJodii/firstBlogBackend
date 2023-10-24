@@ -88,7 +88,55 @@ router.post(
 );
 
 // PUT request for updating a post
-router.put('/post/:id');
+router.put(
+  '/post/:id',
+  [
+    // validate and sanitize the fields
+    body('title')
+      .trim()
+      .isLength({ min: 1 })
+      .escape()
+      .withMessage('Must input title'),
+    body('art')
+      .trim()
+      .isLength({ min: 1 })
+      .escape()
+      .withMessage('must input art url'),
+    body('mediaUrl')
+      .trim()
+      .isLength({ min: 1 })
+      .escape()
+      .withMessage('must input link to media'),
+    body('content').trim().escape(),
+  ],
+  verifyJwtToken,
+  expressAsyncHandler(async (req, res, next) => {
+    //Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+    // Find Blogger to save as blogger for post
+    const blogger = await Blogger.findOne({ username: req.user.username });
+    // Create new post with same _id value as previous post
+    const post = new Post({
+      title: req.body.title,
+      art: req.body.art,
+      mediaUrl: req.body.mediaUrl,
+      content: req.body.content,
+      blogger: blogger._id,
+      _id: req.params.id,
+    });
+    const updatedPost = await Post.findByIdAndUpdate(req.params.id, post, {});
+    // redirect to login page
+    res.status(200).json({
+      message: `Post titled: ${post.title} has been updated`,
+      post: post,
+    });
+  })
+);
 
 // DELETE request for deleting a post
 router.delete('/post/:id');
