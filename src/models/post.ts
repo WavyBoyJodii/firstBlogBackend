@@ -4,7 +4,7 @@ interface Post {
   title: string;
   art: string;
   mediaUrl: string;
-  body: string;
+  content: string;
   blogger: Types.ObjectId;
 }
 
@@ -12,7 +12,7 @@ const PostSchema = new Schema<Post>({
   title: { type: String, required: true },
   art: { type: String, required: true },
   mediaUrl: { type: String, required: true },
-  body: String,
+  content: String,
   blogger: { type: Schema.Types.ObjectId, ref: 'Blogger', required: true },
 });
 

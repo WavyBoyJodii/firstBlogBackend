@@ -6,6 +6,8 @@ import jwt from 'jsonwebtoken';
 import session from 'express-session';
 import passport from 'passport';
 import passportLocal from 'passport-local';
+import passportJWT from 'passport-jwt';
+import { ExtractJwt, StrategyOptions } from 'passport-jwt';
 import flash from 'connect-flash';
 import bcrypt from 'bcryptjs';
 import cookieParser from 'cookie-parser';
@@ -21,6 +23,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import mongoose from 'mongoose';
 const mongoUrl = process.env.MONGO_URL;
+const jwtAccess = process.env.ACCESS_TOKEN_SECRET;
 
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
@@ -68,6 +71,30 @@ passport.use(
   })
 );
 
+interface JwtPayload {
+  sub: string; // Assuming 'sub' is a property in your JWT payload
+  // Add other properties here as needed
+}
+const jwtOptions: StrategyOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: jwtAccess,
+};
+const JwtStrategy = passportJWT.Strategy;
+passport.use(
+  new JwtStrategy(jwtOptions, (payload: JwtPayload, done) => {
+    Blogger.findById(payload.sub)
+      .then((user) => {
+        if (user) {
+          return done(null, user);
+        } else {
+          return done(null, false);
+        }
+      })
+      .catch((err) => done(err, null));
+  })
+);
+// passport.use(JWTStrategy);
+
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -100,7 +127,7 @@ app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', indexRouter);
-app.use('/users', usersRouter);
+app.use('/user', passport.authenticate('jwt', { session: false }), usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

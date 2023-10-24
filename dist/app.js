@@ -32,6 +32,8 @@ const path_1 = __importDefault(require("path"));
 const express_session_1 = __importDefault(require("express-session"));
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
+const passport_jwt_1 = __importDefault(require("passport-jwt"));
+const passport_jwt_2 = require("passport-jwt");
 const connect_flash_1 = __importDefault(require("connect-flash"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
@@ -47,6 +49,7 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const mongoose_1 = __importDefault(require("mongoose"));
 const mongoUrl = process.env.MONGO_URL;
+const jwtAccess = process.env.ACCESS_TOKEN_SECRET;
 const index_1 = __importDefault(require("./routes/index"));
 const users_1 = __importDefault(require("./routes/users"));
 const app = (0, express_1.default)();
@@ -79,8 +82,26 @@ passport_1.default.use(new LocalStrategy(async (username, password, done) => {
         return done(err);
     }
 }));
+const jwtOptions = {
+    jwtFromRequest: passport_jwt_2.ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: jwtAccess,
+};
+const JwtStrategy = passport_jwt_1.default.Strategy;
+passport_1.default.use(new JwtStrategy(jwtOptions, (payload, done) => {
+    blogger_1.default.findById(payload.sub)
+        .then((user) => {
+        if (user) {
+            return done(null, user);
+        }
+        else {
+            return done(null, false);
+        }
+    })
+        .catch((err) => done(err, null));
+}));
+// passport.use(JWTStrategy);
 passport_1.default.serializeUser((user, done) => {
-    done(null, user._id);
+    done(null, user.id);
 });
 passport_1.default.deserializeUser(async (id, done) => {
     try {
@@ -106,8 +127,8 @@ app.use(express_1.default.urlencoded({ extended: false }));
 app.use((0, cookie_parser_1.default)());
 app.use((0, compression_1.default)());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
-app.use('/', index_1.default);
-app.use('/users', users_1.default);
+app.use('/api', index_1.default);
+app.use('/user', passport_1.default.authenticate('jwt', { session: false }), users_1.default);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next((0, http_errors_1.default)(404));
