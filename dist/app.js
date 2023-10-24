@@ -29,6 +29,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const http_errors_1 = __importDefault(require("http-errors"));
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
+const cors_1 = __importDefault(require("cors"));
 const express_session_1 = __importDefault(require("express-session"));
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
@@ -112,6 +113,7 @@ passport_1.default.deserializeUser(async (id, done) => {
         done(err);
     }
 });
+app.use((0, cors_1.default)());
 app.use(helmet_1.default.contentSecurityPolicy({
     directives: {
         'script-src': ["'self'", 'code.jquery.com', 'cdn.jsdelivr.net'],

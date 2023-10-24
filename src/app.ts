@@ -108,6 +108,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+app.use(cors());
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
