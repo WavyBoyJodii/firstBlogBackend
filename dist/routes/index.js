@@ -34,6 +34,7 @@ const express_validator_1 = require("express-validator");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const blogger_1 = __importDefault(require("../models/blogger"));
+const post_1 = __importDefault(require("../models/post"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const jwtAccess = process.env.ACCESS_TOKEN_SECRET;
@@ -103,6 +104,34 @@ router.post('/sign-up', [
     res.status(200).json({
         message: `new Account created for ${newUser.username}`,
     });
+}));
+// GET request for getting one post
+router.get('/post/:id', (0, express_async_handler_1.default)(async (req, res, next) => {
+    const post = await post_1.default.findById(req.params.id);
+    if (!post) {
+        res.status(404).json({
+            message: 'post not found',
+        });
+    }
+    else {
+        res.status(200).json({
+            post,
+        });
+    }
+}));
+//GET all posts
+router.get('/posts', (0, express_async_handler_1.default)(async (req, res, next) => {
+    const allPosts = await post_1.default.find({});
+    if (!allPosts) {
+        res.status(404).json({
+            message: 'No Posts',
+        });
+    }
+    else {
+        res.status(200).json({
+            allPosts,
+        });
+    }
 }));
 exports.default = router;
 //# sourceMappingURL=index.js.map

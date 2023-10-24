@@ -7,6 +7,7 @@ import { body, validationResult } from 'express-validator';
 import expressAsyncHandler from 'express-async-handler';
 import bcrypt from 'bcryptjs';
 import Blogger from '../models/blogger';
+import Post from '../models/post';
 import * as dotenv from 'dotenv';
 dotenv.config();
 const jwtAccess = process.env.ACCESS_TOKEN_SECRET;
@@ -89,6 +90,40 @@ router.post(
     res.status(200).json({
       message: `new Account created for ${newUser.username}`,
     });
+  })
+);
+
+// GET request for getting one post
+router.get(
+  '/post/:id',
+  expressAsyncHandler(async (req, res, next) => {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      res.status(404).json({
+        message: 'post not found',
+      });
+    } else {
+      res.status(200).json({
+        post,
+      });
+    }
+  })
+);
+
+//GET all posts
+router.get(
+  '/posts',
+  expressAsyncHandler(async (req, res, next) => {
+    const allPosts = await Post.find({});
+    if (!allPosts) {
+      res.status(404).json({
+        message: 'No Posts',
+      });
+    } else {
+      res.status(200).json({
+        allPosts,
+      });
+    }
   })
 );
 
