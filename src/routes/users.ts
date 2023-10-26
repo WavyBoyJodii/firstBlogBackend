@@ -41,6 +41,14 @@ router.get('/', function (req, res, next) {
 // POST request for handling post creation
 router.post(
   '/post/create',
+  // Convert the tags to an array.
+  (req: Request, res: Response, next: NextFunction) => {
+    if (!(req.body.tags instanceof Array)) {
+      if (typeof req.body.tags === 'undefined') req.body.tags = [];
+      else req.body.tags = new Array(req.body.tags);
+    }
+    next();
+  },
   [
     // validate and sanitize the fields
     body('title')
@@ -59,6 +67,7 @@ router.post(
       .escape()
       .withMessage('must input link to media'),
     body('content').trim().escape(),
+    body('tags.*').trim().escape(),
   ],
   verifyJwtToken,
   expressAsyncHandler(async (req, res, next) => {
@@ -77,6 +86,8 @@ router.post(
       art: req.body.art,
       mediaUrl: req.body.mediaUrl,
       content: req.body.content,
+      date_created: Date.now(),
+      tags: req.body.tags,
       blogger: blogger._id,
     });
     await newPost.save();
@@ -120,12 +131,16 @@ router.put(
     }
     // Find Blogger to save as blogger for post
     const blogger = await Blogger.findOne({ username: req.user.username });
+    // Find old post to extract date_created in order to not rearrange posts
+    const oldPost = await Post.findById(req.params.id);
     // Create new post with same _id value as previous post
     const post = new Post({
       title: req.body.title,
       art: req.body.art,
       mediaUrl: req.body.mediaUrl,
       content: req.body.content,
+      date_created: oldPost.date_created,
+      tags: req.body.tags,
       blogger: blogger._id,
       _id: req.params.id,
     });
