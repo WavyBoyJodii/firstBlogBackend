@@ -1,10 +1,13 @@
 import { Schema, model, Types } from 'mongoose';
+import { DateTime } from 'luxon';
 
 interface Post {
   title: string;
   art: string;
   mediaUrl: string;
   content: string;
+  date_created: Date;
+  tags: string[];
   blogger: Types.ObjectId;
 }
 
@@ -13,7 +16,18 @@ const PostSchema = new Schema<Post>({
   art: { type: String, required: true },
   mediaUrl: { type: String, required: true },
   content: String,
+  date_created: { type: Date, default: Date.now, required: true },
+  tags: [{ type: String }],
   blogger: { type: Schema.Types.ObjectId, ref: 'Blogger', required: true },
+});
+
+PostSchema.virtual('url').get(function () {
+  return `/post/${this._id}`;
+});
+PostSchema.virtual('release_date_formatted').get(function () {
+  return DateTime.fromJSDate(this.date_created).toLocaleString(
+    DateTime.DATE_MED
+  );
 });
 
 const Post = model<Post>('Post', PostSchema);
