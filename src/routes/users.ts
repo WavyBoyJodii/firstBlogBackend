@@ -68,6 +68,11 @@ router.post(
       .withMessage('must input link to media'),
     body('content').trim().escape(),
     body('tags.*').trim().escape(),
+    body('genre')
+      .trim()
+      .contains('Dembow' || 'Reggaeton' || 'Trap')
+      .escape()
+      .withMessage('Genre is not defined'),
   ],
   verifyJwtToken,
   expressAsyncHandler(async (req, res, next) => {
@@ -88,6 +93,7 @@ router.post(
       content: req.body.content,
       date_created: Date.now(),
       tags: req.body.tags,
+      genre: req.body.genre,
       blogger: blogger._id,
     });
     await newPost.save();
@@ -119,6 +125,12 @@ router.put(
       .escape()
       .withMessage('must input link to media'),
     body('content').trim().escape(),
+    body('tags.*').trim().escape(),
+    body('genre')
+      .trim()
+      .contains('Dembow' || 'Reggaeton' || 'Trap')
+      .escape()
+      .withMessage('Genre is not defined'),
   ],
   verifyJwtToken,
   expressAsyncHandler(async (req, res, next) => {
@@ -141,6 +153,7 @@ router.put(
       content: req.body.content,
       date_created: oldPost.date_created,
       tags: req.body.tags,
+      genre: req.body.genre,
       blogger: blogger._id,
       _id: req.params.id,
     });
