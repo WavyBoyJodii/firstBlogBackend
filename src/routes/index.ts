@@ -97,7 +97,7 @@ router.post(
 router.get(
   '/post/:id',
   expressAsyncHandler(async (req, res, next) => {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).populate('blogger').exec();
     if (!post) {
       res.status(404).json({
         message: 'post not found',
@@ -114,7 +114,7 @@ router.get(
 router.get(
   '/posts',
   expressAsyncHandler(async (req, res, next) => {
-    const allPosts = await Post.find({});
+    const allPosts = await Post.find().populate('blogger').exec();
     if (!allPosts) {
       res.status(404).json({
         message: 'No Posts',
