@@ -32,7 +32,7 @@ const PostSchema = new Schema<Post>({
 PostSchema.virtual('url').get(function () {
   return `/post/${this._id}`;
 });
-PostSchema.virtual('release_date_formatted').get(function () {
+PostSchema.virtual('date_created_formatted').get(function () {
   return DateTime.fromJSDate(this.date_created).toLocaleString(
     DateTime.DATE_MED
   );

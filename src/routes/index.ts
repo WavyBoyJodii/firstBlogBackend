@@ -114,7 +114,10 @@ router.get(
 router.get(
   '/posts',
   expressAsyncHandler(async (req, res, next) => {
-    const allPosts = await Post.find().populate('blogger').exec();
+    const allPosts = await Post.find()
+      .populate('blogger')
+      .sort({ date_created: -1 })
+      .exec();
     if (!allPosts) {
       res.status(404).json({
         message: 'No Posts',
