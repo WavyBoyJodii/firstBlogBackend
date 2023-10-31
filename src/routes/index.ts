@@ -116,7 +116,7 @@ router.get(
   expressAsyncHandler(async (req, res, next) => {
     const allPosts = await Post.find()
       .populate('blogger')
-      .sort({ date_created: -1 })
+      .sort({ date_created: 1 })
       .exec();
     if (!allPosts) {
       res.status(404).json({

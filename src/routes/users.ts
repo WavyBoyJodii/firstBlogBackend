@@ -158,7 +158,7 @@ router.put(
       _id: req.params.id,
     });
     const updatedPost = await Post.findByIdAndUpdate(req.params.id, post, {});
-    // redirect to login page
+    // ralert user post has been updated
     res.status(200).json({
       message: `Post titled: ${post.title} has been updated`,
       post: post,
