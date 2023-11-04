@@ -21,11 +21,11 @@ router.get('/', function (req, res, next) {
 router.post('/login', (req, res, next) => {
   passport.authenticate(
     'local',
-    { session: false, failureFlash: true },
+    { session: false },
     (err: Error, user: any, info: any) => {
       if (err || !user) {
         return res.status(400).json({
-          message: req.flash('error'),
+          message: info,
           // err: err ? err.message : 'User not found',
         });
       }
