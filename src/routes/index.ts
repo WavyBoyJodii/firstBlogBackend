@@ -25,7 +25,7 @@ router.post('/login', (req, res, next) => {
     (err: Error, user: any, info: any) => {
       if (err || !user) {
         return res.status(400).json({
-          message: info,
+          info,
           // err: err ? err.message : 'User not found',
         });
       }
