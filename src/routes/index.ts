@@ -21,7 +21,7 @@ router.get('/', function (req, res, next) {
 router.post('/login', (req, res, next) => {
   passport.authenticate(
     'local',
-    { session: false },
+    { session: false, failureMessage: true },
     (err: Error, user: any, info: any) => {
       if (err || !user) {
         return res.status(400).json({
