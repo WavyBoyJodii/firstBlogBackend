@@ -77,10 +77,11 @@ router.post(
 
     // Hash the password with bcryptjs
     const hashedPass = await bcrypt.hash(req.body.password, 10);
+    const lowerCaseUsername = req.body.username.toLowerCase();
 
     // Create and save the new user
     const newUser = new Blogger({
-      username: req.body.username,
+      username: lowerCaseUsername,
       password: hashedPass,
       email: req.body.email,
       admin: true,
