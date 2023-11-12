@@ -3,6 +3,7 @@ const router = express.Router();
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import expressAsyncHandler from 'express-async-handler';
+import axios from 'axios';
 import Blogger from '../models/blogger';
 import Post from '../models/post';
 import * as dotenv from 'dotenv';
@@ -177,4 +178,41 @@ router.delete(
   })
 );
 
+router.get('/link', async (req, res, next) => {
+  const url = new URL(req.url);
+  const href = url.searchParams.get('url');
+
+  if (!href) {
+    return res.status(400).json({ message: 'Invalid Url' });
+  }
+  try {
+    const axiosResult = await axios.get(href);
+
+    const titleMatch = axiosResult.data.match(/<title>(.*?)<\/title>/);
+    const title = titleMatch ? titleMatch[1] : '';
+
+    const descriptionMatch = axiosResult.data.match(
+      /<meta name="description" content="(.*?)"/
+    );
+    const description = descriptionMatch ? descriptionMatch[1] : '';
+
+    const imageMatch = axiosResult.data.match(
+      /<meta property="og:image" content="(.*?)"/
+    );
+    const imageUrl = imageMatch ? imageMatch[1] : '';
+
+    return res.status(200).json({
+      success: 1,
+      meta: {
+        title,
+        description,
+        image: {
+          url: imageUrl,
+        },
+      },
+    });
+  } catch (err) {
+    return res.status(400).json({ message: err });
+  }
+});
 export default router;
