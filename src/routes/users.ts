@@ -3,7 +3,7 @@ const router = express.Router();
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import expressAsyncHandler from 'express-async-handler';
-import axios from 'axios';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import Blogger from '../models/blogger';
 import Post from '../models/post';
 import * as dotenv from 'dotenv';
@@ -213,8 +213,15 @@ router.get('/link', async (req, res, next) => {
         },
       },
     });
-  } catch (err) {
-    return res.status(400).json({ message: err, url });
+  } catch (error) {
+    const trueError = error as AxiosError;
+    if (trueError.response) {
+      return res.status(400).json({ message: trueError.response.data });
+    } else if (trueError.request) {
+      return res.json({ message: 'no request recieved' });
+    } else {
+      return res.json({ trueError });
+    }
   }
 });
 export default router;
