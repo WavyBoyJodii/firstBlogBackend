@@ -181,6 +181,7 @@ router.delete(
 router.get('/link', async (req, res, next) => {
   // const url = new URL(req.url);
   const url = req.query.url as string;
+
   // const href = url.searchParams.get('url');
 
   // if (!href) {
@@ -213,7 +214,7 @@ router.get('/link', async (req, res, next) => {
       },
     });
   } catch (err) {
-    return res.status(400).json({ message: err });
+    return res.status(400).json({ message: err, url });
   }
 });
 export default router;
