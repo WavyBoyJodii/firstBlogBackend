@@ -27,6 +27,9 @@ const jwtAccess = process.env.ACCESS_TOKEN_SECRET;
 
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
+const corsOptions = {
+  origin: '*',
+};
 
 const app = express();
 
@@ -108,15 +111,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-  next();
-});
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
