@@ -109,6 +109,14 @@ passport.deserializeUser(async (id, done) => {
 });
 
 app.use(cors());
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  next();
+});
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
