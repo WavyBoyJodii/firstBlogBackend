@@ -182,15 +182,17 @@ router.get('/link', async (req, res, next) => {
   // const url = new URL(req.url);
   const url = req.query.url as string;
   const urlFull = new URL(url);
-  const href = urlFull.searchParams.get('url');
+  // const href = urlFull.searchParams.get('url');
 
   // const href = url.searchParams.get('url');
 
-  if (!href) {
-    return res.status(400).json({ message: 'Invalid Url' });
+  if (!urlFull) {
+    return res
+      .status(400)
+      .json({ message: 'Invalid Url something is wrong with the early url' });
   }
   try {
-    const axiosResult = await axios.get(href);
+    const axiosResult = await axios.get(urlFull.toString());
 
     const titleMatch = axiosResult.data.match(/<title>(.*?)<\/title>/);
     const title = titleMatch ? titleMatch[1] : '';
