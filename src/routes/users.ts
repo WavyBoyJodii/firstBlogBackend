@@ -70,8 +70,8 @@ router.post(
     body('content').trim().escape(),
     body('tags.*').trim().escape(),
     body('genre')
-      .trim()
       .contains('Dembow' || 'Reggaeton' || 'Trap')
+      .trim()
       .escape()
       .withMessage('Genre is not defined'),
   ],
