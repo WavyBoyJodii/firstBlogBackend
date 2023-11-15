@@ -129,7 +129,7 @@ router.put(
     body('tags.*').trim().escape(),
     body('genre')
       .trim()
-      .contains('Dembow' || 'Reggaeton' || 'Trap')
+      .isIn(['Dembow', 'Reggaeton', 'Trap'])
       .escape()
       .withMessage('Genre is not defined'),
   ],
