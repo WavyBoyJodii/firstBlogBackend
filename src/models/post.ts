@@ -11,7 +11,7 @@ interface Post {
   title: string;
   art: string;
   mediaUrl: string;
-  content: string;
+  content: object;
   date_created: Date;
   tags: string[];
   genre: Genre;
@@ -22,7 +22,7 @@ const PostSchema = new Schema<Post>({
   title: { type: String, required: true },
   art: { type: String, required: true },
   mediaUrl: { type: String, required: true },
-  content: String,
+  content: Object,
   date_created: { type: Date, default: Date.now, required: true },
   tags: [{ type: String }],
   genre: { type: String, enum: Object.values(Genre), required: true },
