@@ -67,7 +67,7 @@ router.post(
       .isLength({ min: 1 })
       .escape()
       .withMessage('must input link to media'),
-    body('content').trim().escape(),
+    // body('content').trim().escape(),
     body('tags.*').trim().escape(),
     body('genre')
       .trim()
